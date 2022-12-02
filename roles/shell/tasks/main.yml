@@ -8,9 +8,10 @@
   with_items:
   - zsh
 
+
 - name: Set default shell for users
   user:
     name: "{{ item }}"
-    shell: zsh
+    shell: /bin/zsh
   with_items:
   - kevin
