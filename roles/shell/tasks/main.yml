@@ -1,0 +1,16 @@
+- name: Update apt cache
+  apt:
+    update_cache: true
+
+- name: Install common system packages
+  apt:
+    name: "{{ item }}"
+  with_items:
+  - zsh
+
+- name: Set default shell for users
+  user:
+    name: "{{ item }}"
+    shell: zsh
+  with_items:
+  - kevin
