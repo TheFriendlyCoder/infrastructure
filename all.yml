@@ -1,0 +1,4 @@
+---
+- hosts: homeserver2
+  roles:
+    - role: docker

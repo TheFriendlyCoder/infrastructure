@@ -1,0 +1,11 @@
+Installed Ubuntu:
+* selected "minimal" Install
+* added openssh server package
+* I let the install download updates before rebooting
+Post install, I added my ssh key:
+* ssh-copy-id kevin@homeserver2
+Create a password file:
+* touch password.txt
+* chmod 600 password.txt
+then checkout and run the deploy:
+* ./run.sh
