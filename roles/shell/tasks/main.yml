@@ -6,12 +6,15 @@
   apt:
     name: "{{ item }}"
   with_items:
-  - zsh
+    - zsh
+    - vim
 
-
-- name: Set default shell for users
+- name: Set default shell for current user
   user:
-    name: "{{ item }}"
+    name: "{{ ansible_user }}"
     shell: /bin/zsh
-  with_items:
-  - kevin
+
+
+# TODO: deploy dotfiles for kevin user
+# TODO: change kevin user to use a more secure password, or create a local
+#       admin account and remove kevin user from sudoers

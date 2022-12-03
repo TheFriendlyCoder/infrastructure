@@ -1,10 +1,10 @@
-- name: Add Docker apt repository key.
+- name: Add Docker apt repository key
   get_url:
     url: "https://download.docker.com/linux/ubuntu/gpg"
     dest: /etc/apt/trusted.gpg.d/docker.asc
     mode: '0644'
 
-- name: add docker repository to apt
+- name: Add docker repository to apt
   apt_repository:
     repo: deb https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
     state: present
@@ -14,20 +14,55 @@
     name: "{{ item }}"
     state: latest
   with_items:
-  - docker-ce
-  - docker-ce-cli
-  - containerd.io
-  - docker-compose-plugin
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+    - docker-compose-plugin
 
 - name: create Docker group
   group:
     name: docker
 
-- name: add local users to Docker group
+- name: add current user to Docker group
   user:
-    name: "{{ item }}"
+    name: "{{ ansible_user }}"
     append: true
     groups:
-    - docker
-  with_items:
-    - kevin
+      - docker
+
+- block:
+  - user:
+      name: "{{ ansible_user }}"
+    register: current_user
+
+  - name: Install shell script dependencies
+    apt:
+      name: "{{ item }}"
+      state: latest
+    with_items:
+      - jq
+
+  - name: Setup Docker Shell Aliases
+    blockinfile:
+      path: "{{ current_user.home }}/.zprofile"
+      marker: "{mark} Docker"
+      marker_begin: "{{BLOCK_START_MARKER}}"
+      marker_end: "{{BLOCK_END_MARKER}}"
+      group: "{{ current_user.group }}"
+      owner: "{{ current_user.uid }}"
+      create: true
+      block: |
+        # alias for deleting any dangling / unused docker images in the local cache
+        alias docker_clean_images='docker rmi $(docker images -a --filter=dangling=true -q)'
+
+        # alias for deleting all stopped docker containers in the local cache
+        alias docker_clean_ps='docker rm $(docker ps --filter=status=exited --filter=status=created -q)'
+
+        # alias for deleting orphaned disk volumes from Docker
+        alias docker_clean_vols='docker volume rm $(docker volume ls -qf dangling=true)'
+
+        # purge all unused docker images from the local cache
+        alias docker_clean='docker_clean_ps 2>/dev/null; docker_clean_images 2>/dev/null; docker_clean_vols 2>/dev/null'
+
+        # generate a report showing the CPU architectures of all Docker images
+        alias docker_arch='docker images --format="{{ '{{' }}json .ID{{ '}}' }}" | xargs -I{} docker inspect {} --format="{{ '{{' }}json .{{ '}}' }}" | jq "[.Architecture, .RepoTags[0]] | join(\" - \")"'

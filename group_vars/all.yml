@@ -1,0 +1,16 @@
+# Markers used by the blockinfile task
+#
+# Example:
+# - blockinfile
+#     path: "/path/to/file"
+#     marker: "{mark} Section Name"
+#     marker_begin: "{{BLOCK_START_MARKER}}"
+#     marker_end: "{{BLOCK_END_MARKER}}"
+#     block: "My Text Block"
+#
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+#                                   WARNING
+# changing these markers and will cause duplicate code blocks to get created
+# -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+BLOCK_START_MARKER: "#-=-=-=-=-=-=-=-=-=-=-=-=-=-= ANSIBLE BEGIN -"
+BLOCK_END_MARKER: "#-=-=-=-=-=-=-=-=-=-=-=-=-=-= ANSIBLE END -"
