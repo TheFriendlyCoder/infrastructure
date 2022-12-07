@@ -3,4 +3,5 @@
   roles:
     - role: shell
     - role: git
+    - role: dotfiles
     - role: docker

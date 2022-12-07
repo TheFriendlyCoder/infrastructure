@@ -1,0 +1,28 @@
+- block:
+  - name: See if dotfiles are already installed
+    user:
+      name: "{{ ansible_user }}"
+    register: current_user
+
+  - set_fact:
+      DOT_FILES_DIR: "{{current_user.home}}/.dotfiles"
+
+  - stat:
+      path: "{{ DOT_FILES_DIR }}"
+    register: dot_files_dir
+
+- name: Checkout dotfiles project
+  git:
+    repo: "git@github.com:TheFriendlyCoder/dotfiles.git"
+    dest: "{{ DOT_FILES_DIR }}"
+  become: yes
+  become_user: "{{current_user.name}}"
+  when: not dot_files_dir.stat.exists
+
+- name: symlink vim config file
+  file:
+    src: "{{current_user.home}}/.dotfiles/vim/.vimrc"
+    dest: "{{current_user.home}}/.vimrc"
+    state: link
+  become: yes
+  become_user: "{{current_user.name}}"

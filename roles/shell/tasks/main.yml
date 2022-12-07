@@ -14,7 +14,6 @@
     name: "{{ ansible_user }}"
     shell: /bin/zsh
 
-
-# TODO: deploy dotfiles for kevin user
+# TODO: setup oh-my-zsh with themes and stuff
 # TODO: change kevin user to use a more secure password, or create a local
 #       admin account and remove kevin user from sudoers
