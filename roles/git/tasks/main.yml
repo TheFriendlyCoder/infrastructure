@@ -1,0 +1,83 @@
+- name: Install latest version of Git
+  apt:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - git
+
+- user:
+    name: "{{ ansible_user }}"
+  register: current_user
+
+- name: generate ssh key
+  openssh_keypair:
+    group: "{{ current_user.group }}"
+    owner: "{{ current_user.uid }}"
+    path: "{{current_user.home}}/.ssh/id_rsa"
+    regenerate: full_idempotence
+  register: ssh_key
+
+- pause:
+    echo: false
+    prompt: |
+      SSH key has changed. You may need to update your Github account:
+      {{ ssh_key.public_key }}
+      Press any key to continue...
+
+  when: ssh_key.changed
+
+# TODO: see if there's a better way to handle changes to the SSH key
+#       either auto-push it to Github, or maybe store it in a secret store
+#       and push it from there to the inventory host then assume the user
+#       has deployed it by hand already
+# TODO: check to see if the SSH key exists on Github before prompting because
+#       even if it doesn't change doesn't mean the key actually exists on the
+#       users account
+
+# https://stackoverflow.com/questions/34906302/add-public-key-to-known-hosts-file
+- name: Trust GitHub SSH key
+  uri:
+    url: "https://api.github.com/meta"
+    return_content: true
+
+  register: github_meta
+
+- debug:
+    msg: "value is {{ github_meta.json.ssh_keys }}"
+
+- stat:
+    path: "{{current_user.home}}/.ssh/known_hosts"
+  register: hosts_file
+
+- lineinfile:
+    name: "{{current_user.home}}/.ssh/known_hosts"
+    line: "{{item}}"
+    search_string: "{{ item }}"
+  register: result
+  with_items: "{{github_meta.json.ssh_keys}}"
+  check_mode: yes
+  when: hosts_file.stat.exists
+  changed_when: false
+
+- set_fact:
+    new_keys: "{{result | json_query('results[?changed==true].item')}}"
+  when: hosts_file.stat.exists
+- set_fact:
+    new_keys: "{{github_meta.json.ssh_keys}}"
+  when: not hosts_file.stat.exists
+
+- lineinfile:
+    name: "{{current_user.home}}/.ssh/known_hosts"
+    line: "github.com {{item}}"
+    create: true
+    group: "{{ current_user.group }}"
+    owner: "{{ current_user.uid }}"
+    mode: 0600
+  with_items: "{{ new_keys }}"
+  register: kh_updates
+
+- command:
+    cmd: "ssh-keygen -Hf {{current_user.home}}/.ssh/known_hosts"
+  become: yes
+  become_user: "{{current_user.name}}"
+  when: kh_updates.changed
