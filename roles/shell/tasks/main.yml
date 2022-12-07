@@ -74,3 +74,5 @@
       DISABLE_UNTRACKED_FILES_DIRTY="true"
 
       source $ZSH/oh-my-zsh.sh
+  become: yes
+  become_user: "{{current_user.name}}"
