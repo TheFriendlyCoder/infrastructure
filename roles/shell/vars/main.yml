@@ -1,0 +1,6 @@
+omzsh_theme: robbyrussell
+omzsh_plugin_names:
+  - git
+  - docker
+
+omzsh_plugins: "{{ omzsh_plugin_names | join('\n  ') }}"

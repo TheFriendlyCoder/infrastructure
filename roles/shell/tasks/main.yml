@@ -14,6 +14,63 @@
     name: "{{ ansible_user }}"
     shell: /bin/zsh
 
-# TODO: setup oh-my-zsh with themes and stuff
-# TODO: change kevin user to use a more secure password, or create a local
-#       admin account and remove kevin user from sudoers
+- user:
+    name: "{{ ansible_user }}"
+  register: current_user
+
+- name: Find Oh-My-Zsh Install Folder
+  stat:
+    path: "{{current_user.home}}/.oh-my-zsh"
+  register: omzsh_dir
+
+- block:
+  - tempfile:
+      state: directory
+    register: temp_dir
+
+  - name: Download Oh-My-Zsh installer
+    get_url:
+      url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+      dest: "{{temp_dir.path}}"
+    register: download_result
+
+  - stat:
+      path: "{{current_user.home}}/.zshrc"
+    register: original_zshrc
+
+  - name: Installing Oh-My-Zsh
+    shell: "/bin/sh {{temp_dir.path}}/install.sh --unattended --keep-zshrc"
+
+ # If there was no zshrc file when we started, oh-my-zsh will generate one for
+ # us, even with the keep-zshrc flag, so we purge that useless file here
+  - file:
+      path: "{{current_user.home}}/.zshrc"
+      state: absent
+    when: not original_zshrc.stat.exists
+
+  when: not omzsh_dir.stat.exists
+  become: yes
+  become_user: "{{current_user.name}}"
+
+- name: Update .zshrc file for Oh-My-Zsh
+  blockinfile:
+    path: "{{ current_user.home }}/.zshrc"
+    marker: "{mark} Oh-My-Zsh"
+    marker_begin: "{{BLOCK_START_MARKER}}"
+    marker_end: "{{BLOCK_END_MARKER}}"
+    create: true
+    block: |
+      export ZSH="$HOME/.oh-my-zsh"
+      ZSH_THEME="{{omzsh_theme}}"
+      plugins=(
+        {{ omzsh_plugins }}
+      )
+
+      # Case Sensitive Auto-Complete
+      CASE_SENSITIVE="true"
+
+      # Disable marking of untraced files in Git folders as "dirty"
+      # Improves performance on large repos significantly
+      DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+      source $ZSH/oh-my-zsh.sh
