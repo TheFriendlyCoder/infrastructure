@@ -5,3 +5,4 @@
     - role: git
     - role: dotfiles
     - role: docker
+    - role: homeassistant

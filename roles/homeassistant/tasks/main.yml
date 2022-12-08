@@ -1,0 +1,14 @@
+- name: Launch Home Assistant
+  docker_container:
+    name: homeassistant
+    network_mode: host
+    volumes:
+      - /etc/homeassistant:/config
+    restart_policy: unless-stopped
+    privileged: yes
+    env:
+      TZ: "America/Moncton"
+    state: started
+    image: ghcr.io/home-assistant/home-assistant:stable
+
+# TODO: add code for setting up backups (maybe use tarball of config folder and upload to onedrive)
