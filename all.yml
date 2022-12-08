@@ -6,3 +6,4 @@
     - role: dotfiles
     - role: docker
     - role: homeassistant
+    - role: unifi

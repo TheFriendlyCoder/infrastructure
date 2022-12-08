@@ -55,7 +55,6 @@
     get_url:
       url: https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh
       dest: "{{temp_dir.path}}"
-    register: download_result
 
   - stat:
       path: "{{current_user.home}}/.zshrc"
