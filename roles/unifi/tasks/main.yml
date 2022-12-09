@@ -1,15 +1,43 @@
-- tempfile:
+# TODO: consider running unifi natively on the host
+# # https://community.ui.com/questions/UniFi-Installation-Scripts-or-UniFi-Easy-Update-Script-or-UniFi-Lets-Encrypt-or-UniFi-Easy-Encrypt-/ccbc7530-dd61-40a7-82ec-22b17f027776
+# - tempfile:
+#     state: directory
+#   register: temp_dir
+
+# - name: Download installer
+#   get_url:
+#     url: https://dl.ui.com/unifi/7.3.76/unifi_sysvinit_all.deb
+#     dest: "{{temp_dir.path}}"
+#   register: installer
+
+- name: Create unifi data folder
+  file:
+    path: /etc/unifi/data
     state: directory
-  register: temp_dir
 
-- name: Download installer
-  get_url:
-    url: https://dl.ui.com/unifi/7.3.76/unifi_sysvinit_all.deb
-    dest: "{{temp_dir.path}}"
-  register: installer
+- name: Create unifi log folder
+  file:
+    path: /etc/unifi/log
+    state: directory
 
-- debug:
-    msg: "Result is {{installer}}"
+- name: Launch Unifi Controller
+  docker_container:
+    name: unifi
+    network_mode: host
+    volumes:
+      - /etc/unifi:/unifi
+    restart_policy: unless-stopped
+    exposed_ports:
+      - 8080:8080
+      - 8443:8443
+      - 3478:3478/udp
+    init: yes
+    env:
+      TZ: "America/Moncton"
+    state: started
+    user: unifi
+    image: jacobalberty/unifi:latest
+    healthcheck:
+      test: ["NONE"]
 
-# TODO: install
-# https://community.ui.com/questions/UniFi-Installation-Scripts-or-UniFi-Easy-Update-Script-or-UniFi-Lets-Encrypt-or-UniFi-Easy-Encrypt-/ccbc7530-dd61-40a7-82ec-22b17f027776
+# TODO: add code for setting up backups (maybe use tarball of config folder and upload to onedrive)
