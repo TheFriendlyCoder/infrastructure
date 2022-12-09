@@ -40,4 +40,17 @@
     healthcheck:
       test: ["NONE"]
 
+# NOTE: post install I had to create custom local admin for homeassistant
+#       to create a local admin you need to set the web UI to legacy mode
+#       by going to settings -> System -> Advanced. Then when you add a new
+#       limited admin user without an email, and then you can restore the
+#       modern UI
+# TODO: see if there is some way to do this via Ansible and APIs
+
+# NOTE: I had to hook up the integration between homeassistant and unifi
+#       and I had to use either the IP address of the host or "localhost",
+#       using the host name didn't work
+# TODO: see if I can set up this integration automatically with Ansible
+
 # TODO: add code for setting up backups (maybe use tarball of config folder and upload to onedrive)
+# TODO: review ubiquiti automatic backups to see if that is a better option
