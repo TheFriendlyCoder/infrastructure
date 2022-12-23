@@ -7,3 +7,7 @@
     - role: docker
     - role: homeassistant
     - role: unifi
+
+- hosts: homeserver1
+  roles:
+    - role: minecraft

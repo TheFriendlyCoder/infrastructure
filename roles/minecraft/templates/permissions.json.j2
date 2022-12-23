@@ -1,0 +1,11 @@
+[
+{% for cur_user in users %}
+    {
+        "permission": "{{ cur_user.permission }}",
+        "xuid": "{{ cur_user.xuid }}"
+    }
+{%- if not loop.last %}
+,
+{% endif %}
+{% endfor +%}
+]

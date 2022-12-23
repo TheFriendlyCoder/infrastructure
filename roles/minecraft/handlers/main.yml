@@ -1,0 +1,4 @@
+- name: Restart Minecraft Service
+  service:
+    name: phillips_oasis
+    state: restarted

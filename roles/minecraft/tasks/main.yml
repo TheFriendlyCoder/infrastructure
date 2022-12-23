@@ -1,0 +1,13 @@
+- user:
+    name: "{{ ansible_user }}"
+  register: current_user
+
+- name: Set user permissions
+  template:
+    src: permissions.json.j2
+    dest: "{{current_user.home}}/minecraftbe/phillips_oasis/permissions.json"
+    group: "{{ current_user.group }}"
+    owner: "{{ current_user.uid }}"
+    backup: true
+    mode: 0644
+  notify: "Restart Minecraft Service"
