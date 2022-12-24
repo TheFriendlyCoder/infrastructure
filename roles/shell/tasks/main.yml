@@ -4,6 +4,7 @@
     update_cache: true
     # Enabling the following line will upgrade the kernel
     #upgrade: dist
+    upgrade: full
     clean: true
   register: update_result
   become: yes
@@ -22,6 +23,7 @@
     post_reboot_delay: 30
     test_command: uptime
   when: reboot_required_file.stat.exists
+  become: yes
 
 - name: Install common system packages
   apt:
@@ -29,11 +31,13 @@
   with_items:
     - zsh
     - vim
+  become: yes
 
 - name: Set default shell for current user
   user:
     name: "{{ ansible_user }}"
     shell: /bin/zsh
+  become: yes
 
 - name: Find Oh-My-Zsh Install Folder
   stat:

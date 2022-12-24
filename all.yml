@@ -28,6 +28,10 @@
 
 - hosts: homeserver1
   roles:
+    - role: shell
+      tags:
+        - all
+        - shell
     - role: onedrive
       tags:
         - all
