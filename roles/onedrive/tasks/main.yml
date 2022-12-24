@@ -1,0 +1,28 @@
+# Reference links:
+#   https://linuxhint.com/install-microsoft-onedrive-ubuntu/
+#   https://github.com/abraunegg/onedrive
+#   https://launchpad.net/~yann1ck/+archive/ubuntu/onedrive
+- name: OneDrive Config Folder
+  file:
+    path: "~/.config/onedrive"
+    mode: 0700
+
+- name: OneDrive Backup Folder
+  file:
+    path: "~/OneDrive"
+
+# TODO: see if the contents of this file are correct - may need to enable the ignore option "*"
+- name: Copy OneDrive Config File
+  copy:
+    src: config
+    dest: "~/.config/onedrive/config"
+
+- name: Add OneDrive repository to apt
+  apt_repository:
+    repo: ppa:yann1ck/onedrive
+    state: present
+
+- name: Install latest OneDrive version
+  apt:
+    name: onedrive
+    state: latest

@@ -1,0 +1,4 @@
+#sync_dir = "~/OneDriveB"
+#skip_dir = "*"
+#upload_only = "true"
+enable_logging = "true"

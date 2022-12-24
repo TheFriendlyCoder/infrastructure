@@ -28,6 +28,10 @@
 
 - hosts: homeserver1
   roles:
+    - role: onedrive
+      tags:
+        - all
+        - onedrive
     - role: minecraft
       tags:
         - all
