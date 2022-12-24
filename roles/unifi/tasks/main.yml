@@ -39,6 +39,7 @@
     image: jacobalberty/unifi:latest
     healthcheck:
       test: ["NONE"]
+    pull: yes
 
 # NOTE: post install I had to create custom local admin for homeassistant
 #       to create a local admin you need to set the web UI to legacy mode

@@ -10,5 +10,6 @@
       TZ: "America/Moncton"
     state: started
     image: ghcr.io/home-assistant/home-assistant:stable
+    pull: yes
 
 # TODO: add code for setting up backups (maybe use tarball of config folder and upload to onedrive)

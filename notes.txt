@@ -12,3 +12,6 @@ Create a password files:
 * chmod 600 vault_pass.txt
 then checkout and run the deploy:
 * ./run.sh
+
+TIP: to view encrypted secrets use
+ansible-vault view /path/to/file

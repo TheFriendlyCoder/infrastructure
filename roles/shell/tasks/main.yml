@@ -6,9 +6,7 @@
     #upgrade: dist
     clean: true
   register: update_result
-
-- debug:
-    msg: "Update results are {{update_result}}"
+  become: yes
 
 - name: Check if a reboot is needed
   stat:
@@ -37,13 +35,9 @@
     name: "{{ ansible_user }}"
     shell: /bin/zsh
 
-- user:
-    name: "{{ ansible_user }}"
-  register: current_user
-
 - name: Find Oh-My-Zsh Install Folder
   stat:
-    path: "{{current_user.home}}/.oh-my-zsh"
+    path: "~/.oh-my-zsh"
   register: omzsh_dir
 
 - block:
@@ -57,7 +51,7 @@
       dest: "{{temp_dir.path}}"
 
   - stat:
-      path: "{{current_user.home}}/.zshrc"
+      path: "~/.zshrc"
     register: original_zshrc
 
   - name: Installing Oh-My-Zsh
@@ -66,17 +60,15 @@
  # If there was no zshrc file when we started, oh-my-zsh will generate one for
  # us, even with the keep-zshrc flag, so we purge that useless file here
   - file:
-      path: "{{current_user.home}}/.zshrc"
+      path: "~/.zshrc"
       state: absent
     when: not original_zshrc.stat.exists
 
   when: not omzsh_dir.stat.exists
-  become: yes
-  become_user: "{{current_user.name}}"
 
 - name: Update .zshrc file for Oh-My-Zsh
   blockinfile:
-    path: "{{ current_user.home }}/.zshrc"
+    path: "~/.zshrc"
     marker: "{mark} Oh-My-Zsh"
     marker_begin: "{{BLOCK_START_MARKER}}"
     marker_end: "{{BLOCK_END_MARKER}}"
@@ -96,5 +88,6 @@
       DISABLE_UNTRACKED_FILES_DIRTY="true"
 
       source $ZSH/oh-my-zsh.sh
-  become: yes
-  become_user: "{{current_user.name}}"
+
+# TODO: try upgrading omz
+# https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/upgrade.sh

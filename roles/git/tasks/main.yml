@@ -5,15 +5,9 @@
   with_items:
     - git
 
-- user:
-    name: "{{ ansible_user }}"
-  register: current_user
-
 - name: generate ssh key
   openssh_keypair:
-    group: "{{ current_user.group }}"
-    owner: "{{ current_user.uid }}"
-    path: "{{current_user.home}}/.ssh/id_rsa"
+    path: "~/.ssh/id_rsa"
     regenerate: full_idempotence
   register: ssh_key
 
@@ -23,7 +17,6 @@
       SSH key has changed. You may need to update your Github account:
       {{ ssh_key.public_key }}
       Press any key to continue...
-
   when: ssh_key.changed
 
 # TODO: see if there's a better way to handle changes to the SSH key
@@ -46,11 +39,11 @@
     msg: "value is {{ github_meta.json.ssh_keys }}"
 
 - stat:
-    path: "{{current_user.home}}/.ssh/known_hosts"
+    path: "~/.ssh/known_hosts"
   register: hosts_file
 
 - lineinfile:
-    name: "{{current_user.home}}/.ssh/known_hosts"
+    name: "~/.ssh/known_hosts"
     line: "{{item}}"
     search_string: "{{ item }}"
   register: result
@@ -67,17 +60,13 @@
   when: not hosts_file.stat.exists
 
 - lineinfile:
-    name: "{{current_user.home}}/.ssh/known_hosts"
+    name: "~/.ssh/known_hosts"
     line: "github.com {{item}}"
     create: true
-    group: "{{ current_user.group }}"
-    owner: "{{ current_user.uid }}"
     mode: 0600
   with_items: "{{ new_keys }}"
   register: kh_updates
 
 - command:
-    cmd: "ssh-keygen -Hf {{current_user.home}}/.ssh/known_hosts"
-  become: yes
-  become_user: "{{current_user.name}}"
+    cmd: "ssh-keygen -Hf ~/.ssh/known_hosts"
   when: kh_updates.changed

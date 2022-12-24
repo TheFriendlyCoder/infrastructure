@@ -2,12 +2,33 @@
 - hosts: homeserver2
   roles:
     - role: shell
+      tags:
+        - all
+        - shell
     - role: git
+      tags:
+        - all
+        - git
     - role: dotfiles
+      tags:
+        - all
+        - dotfiles
     - role: docker
+      tags:
+        - all
+        - docker
     - role: homeassistant
+      tags:
+        - all
+        - homeassistant
     - role: unifi
+      tags:
+        - all
+        - unifi
 
 - hosts: homeserver1
   roles:
     - role: minecraft
+      tags:
+        - all
+        - minecraft
