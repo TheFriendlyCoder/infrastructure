@@ -12,6 +12,12 @@
     mode: 0644
   notify: "Restart Minecraft Service"
 
+- name: Create backup script
+  copy:
+    src: upload.sh
+    dest: "~/minecraftbe/phillips_oasis/upload.sh"
+    mode: 0700
+
 # TODO: add backup config, maybe with a new onedrive role
 # TODO: rework backup logic to use separate cron that doesn't rely on update script (will make service reboots faster)
 # TODO: add logic to deploy and setup Minecraft (pull out custom scripts into Ansible)

@@ -26,3 +26,5 @@
   apt:
     name: onedrive
     state: latest
+
+# TODO: add code to generate auth token for onedrive using oauth / 2fa
