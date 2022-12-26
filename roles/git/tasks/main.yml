@@ -12,6 +12,10 @@
     regenerate: full_idempotence
   register: ssh_key
 
+- debug:
+    msg: "Public SSH key is: {{ ssh_key.public_key }}"
+  when: not ssh_key.changed
+
 - pause:
     echo: false
     prompt: |
@@ -37,7 +41,7 @@
   register: github_meta
 
 - debug:
-    msg: "value is {{ github_meta.json.ssh_keys }}"
+    msg: "GitHub public SSH keys are {{ github_meta.json.ssh_keys }}"
 
 - stat:
     path: "~/.ssh/known_hosts"
