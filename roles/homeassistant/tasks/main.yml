@@ -12,4 +12,7 @@
     image: ghcr.io/home-assistant/home-assistant:stable
     pull: yes
 
+- debug:
+    msg: "Home assistant can be accessed through here: http://{{inventory_hostname}}:8123"
+
 # TODO: add code for setting up backups (maybe use tarball of config folder and upload to onedrive)
