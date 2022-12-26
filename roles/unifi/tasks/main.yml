@@ -14,11 +14,13 @@
   file:
     path: /etc/unifi/data
     state: directory
+  become: yes
 
 - name: Create unifi log folder
   file:
     path: /etc/unifi/log
     state: directory
+  become: yes
 
 - name: Launch Unifi Controller
   docker_container:
