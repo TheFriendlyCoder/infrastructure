@@ -31,6 +31,9 @@
   with_items:
     - zsh
     - vim
+    # NOTE: we need the Git client installed to st up OMZ but we defer
+    #       the full git client setup to the git role
+    - git
   become: yes
 
 - name: Set default shell for current user

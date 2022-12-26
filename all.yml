@@ -40,3 +40,38 @@
       tags:
         - all
         - minecraft
+
+- hosts: testserver
+  roles:
+    - role: shell
+      tags:
+        - all
+        - shell
+    - role: git
+      tags:
+        - all
+        - git
+    - role: dotfiles
+      tags:
+        - all
+        - dotfiles
+    - role: docker
+      tags:
+        - all
+        - docker
+    - role: homeassistant
+      tags:
+        - all
+        - homeassistant
+    - role: unifi
+      tags:
+        - all
+        - unifi
+    - role: onedrive
+      tags:
+        - all
+        - onedrive
+    - role: minecraft
+      tags:
+        - all
+        - minecraft
